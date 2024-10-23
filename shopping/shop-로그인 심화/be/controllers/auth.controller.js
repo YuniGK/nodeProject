@@ -60,4 +60,21 @@ authController.authenticate = async (req, res, next) => {
     }
 }
 
+authController.checkAdminPermission = async (req, res, next) => {
+    try {
+        //토큰값을 통해 admin인지 확인을 위해 토큰을 가져온다.
+        const {userId} = req;
+
+        const user = await User.findById(userId);
+
+         if(user.level !== 'admin'){
+            throw new Error('권한이 없습니다.');
+         }
+
+         next();
+    } catch (error) {
+        res.status(400).json({status : "check admin fail", message : error.message});
+    }
+}
+
 module.exports = authController;

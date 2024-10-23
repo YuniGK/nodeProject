@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const productSchema = Schema({
     sku : {type : String, required : true, unique : true}//제품 구별 코드
+    //, size : {type : Array, required : true}
     , name : {type : String, required : true}
     , image : {type : String, required : true}
     , category : {type : Array, required : true}
