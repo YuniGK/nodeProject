@@ -97,7 +97,6 @@ export const loginWithToken = createAsyncThunk(
     try {
       //headers > authorization로 보내기때문에 req로 보낼 필요가 없다.
       const response = await api.get("/user/me");
-      console.log(`${response.data} --- ${response.data.data}`)
 
       return response.data;
     } catch (error) {
