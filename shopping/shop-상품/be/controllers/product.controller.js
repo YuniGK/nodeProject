@@ -37,7 +37,7 @@ productController.getListProduct = async (req, res) => {
             query.skip((page - 1) * PAGE_SIZE).limit(PAGE_SIZE);
 
             //전체 페이지 수 - 데이터 총 수 / PAGE_SIZE
-            //const totalItemNum = await Product.find(cond).count();
+            //const totalItemNum = await Product.find(cond).count(); - count() 동작하지 않아 아래와 같이 수정했음
             const totalItemNum = await Product.find(cond);
             const total = Object.keys(totalItemNum).length;
 
