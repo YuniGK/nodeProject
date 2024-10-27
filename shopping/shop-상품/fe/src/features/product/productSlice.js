@@ -10,8 +10,6 @@ export const getProductList = createAsyncThunk(
                                                   //파라미터에 모든 쿼리를 보낸다.
       const response = await api.get("/product", {params : {...query}});
 
-      console.log('res ', response)
-
       if(response.status !== 200){
         throw new Error(response.error);
       }
@@ -54,7 +52,24 @@ export const deleteProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   "products/editProduct",
-  async ({ id, ...formData }, { dispatch, rejectWithValue }) => {}
+  async ({ id, ...formData }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.put(`/product/${id}`, formData);
+   
+      if(response.status !== 200){
+        throw new Error(response.error);
+      }
+      
+      //성공메시지
+      dispatch(showToastMessage({message : "상품수정이 되었습니다.", status : "success"}));
+      //조회화면을 다시 조회한다.
+      dispatch(getProductList({page : 1}));
+
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 );
 
 // 슬라이스 생성
@@ -70,6 +85,8 @@ const productSlice = createSlice({
   },
   reducers: {
     setSelectedProduct: (state, action) => {
+      //정보를 저장하거나 수정하는 등의 작업(저장등의 작업은 Thunk에서 작업을 수행함)을 수행하지 않아
+      //, reducers에서 작업을 수행한다.
       state.selectedProduct = action.payload;
     },
     setFilteredList: (state, action) => {
@@ -100,7 +117,7 @@ const productSlice = createSlice({
 
               state.success = false;
             })//실패
-
+            /* ===== */            
             .addCase(getProductList.pending, (state) => {
               state.loading = true;
             })//대기
@@ -115,6 +132,21 @@ const productSlice = createSlice({
               state.loading = false;
               state.error = action.payload;//에러 셋팅
             })//실패
+            /* ===== */            
+            .addCase(editProduct.pending, (state) => {
+              state.loading = true;
+            })//대기
+            .addCase(editProduct.fulfilled, (state, action) => {
+              state.loading = false;//로딩바 끄기
+              state.error = "";//에러 초기화
+              state.success = true;
+            })//성공
+            .addCase(editProduct.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload;//에러 셋팅
+              state.success = false;
+            })//실패
+            /* ===== */            
   },
 });
 

@@ -60,7 +60,13 @@ const AdminProductPage = () => {
 
   const openEditForm = (product) => {
     //edit모드로 설정하고
+    setMode('edit');
+
+    //상품에 대한 정보를 가져와 모듈에 정보를 보여주기 위해 
+    dispatch(setSelectedProduct(product));
+
     // 아이템 수정다이얼로그 열어주기
+    setShowDialog(true);
   };
 
   const handleClickNewItem = () => {

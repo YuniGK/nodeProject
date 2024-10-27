@@ -28,7 +28,7 @@ productController.getListProduct = async (req, res) => {
 
         let query = Product.find(cond);
 
-        let response = {status : "success"};
+        let response = {status : "product list success"};
 
         if(page){
             //page 파라미터의 값이 있을 경우
@@ -55,6 +55,26 @@ productController.getListProduct = async (req, res) => {
         res.status(200).json(response);
     } catch (error) {
         res.status(400).json({status : "product list fail", message : error.message});
+    }
+}
+
+productController.updaterProduct = async(req, res) => {
+    try {
+        const productId = req.params.id;
+        const { sku, name, size, image, category, description, price, stock, status } = req.body;
+
+        const product = await Product.findByIdAndUpdate(
+            {_id : productId}
+            , { sku, name, size, image, category, description, price, stock, status }
+            , {new : true}//새로운 값을 받고 싶을 경우
+        );
+
+        if(!product)
+            throw new Error('상품이 존재하지 않습니다.');
+
+        res.status(200).json({status : "update product success", data : product});
+    } catch (error) {
+        res.status(400).json({status : "product update fail", message : error.message});
     }
 }
 

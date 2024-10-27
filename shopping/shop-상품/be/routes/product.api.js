@@ -11,4 +11,9 @@ router.post("/"
 
 router.get("/", productController.getListProduct);
 
+router.put("/:id"
+    , authController.authenticate
+    , authController.checkAdminPermission//admin인지 확인 필요
+    , productController.updaterProduct);
+
 module.exports = router;

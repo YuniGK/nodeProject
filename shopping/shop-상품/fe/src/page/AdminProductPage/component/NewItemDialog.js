@@ -67,9 +67,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    //데이터 형식 확인
-    console.log(`formData ${formData} --- stock ${stock}`);
-
     //재고를 입력했는지 확인, 아니면 에러
     if(stock.length === 0)
       return setStockError(true);
@@ -85,7 +82,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
       dispatch(createProduct({...formData, stock:totalStock}));
     } else {
       // 상품 수정하기
-      dispatch();
+      dispatch(editProduct({...formData, stock:totalStock, id : selectedProduct._id}));
     }
   };
 
