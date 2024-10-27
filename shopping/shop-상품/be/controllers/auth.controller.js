@@ -53,7 +53,7 @@ authController.authenticate = async (req, res, next) => {
 
             req.userId = payload._id;
         });
-
+        
         //다음으로 넘어간다.
         next();
 
