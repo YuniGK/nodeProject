@@ -37,6 +37,9 @@ export const createProduct = createAsyncThunk(
       }
 
       dispatch(showToastMessage({message : "상품등록이 되었습니다.", status : "success"}));
+      
+      //조회화면을 다시 조회한다.
+      dispatch(getProductList({page : 1}));
 
       return response.data.data;
     } catch (error) {
