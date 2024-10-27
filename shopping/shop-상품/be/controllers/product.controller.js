@@ -21,18 +21,15 @@ productController.getListProduct = async (req, res) => {
     try {
         const {page, name} = req.query;
 
-        const list = null;
+                                    //$regex 포함된 내용을 검색
+                                                //i 대소문자 구분하지 않는다.
+        const cond = name ? {name : {$regex:name, $options:"i"}} : {} ;
+        let query = Product.find(cond);
 
-        if(name){
-            //list = await Product.find({name});
-                                                //$regex 포함된 내용을 검색
-                                                            //i 대소문자 구분하지 않는다.
-            list = await Product.find({name : {$regex:name, $options:"i"}});
-        }
+        //실행과 선언을 따로 분리가 가능하며, 아래의 내용은 실행을 요청한다.
+        const productList = await query.exec();
 
-        list = await Product.find({});
-
-        res.status(200).json({status : "product list success", list});
+        res.status(200).json({status : "product list success", data : productList});
     } catch (error) {
         res.status(400).json({status : "product list fail", message : error.message});
     }

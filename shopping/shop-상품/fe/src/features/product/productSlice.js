@@ -14,7 +14,9 @@ export const getProductList = createAsyncThunk(
         throw new Error(response.error);
       }
 
-      return response.data.list;
+      console.log('res ',response);
+
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.message)
     }
@@ -106,6 +108,8 @@ const productSlice = createSlice({
               state.loading = false;//로딩바 끄기
               state.error = "";//에러 초기화
      
+              console.log(action.payload);
+
               state.productList = action.payload;
             })//성공
             .addCase(getProductList.rejected, (state, action) => {
