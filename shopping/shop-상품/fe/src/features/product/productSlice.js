@@ -10,13 +10,13 @@ export const getProductList = createAsyncThunk(
                                                   //파라미터에 모든 쿼리를 보낸다.
       const response = await api.get("/product", {params : {...query}});
 
+      console.log('res ', response)
+
       if(response.status !== 200){
         throw new Error(response.error);
       }
 
-      console.log('res ',response);
-
-      return response.data.data;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.message)
     }
@@ -108,9 +108,8 @@ const productSlice = createSlice({
               state.loading = false;//로딩바 끄기
               state.error = "";//에러 초기화
      
-              console.log(action.payload);
-
-              state.productList = action.payload;
+              state.productList = action.payload.data;
+              state.totalPageNum = action.payload.totalPageNum;
             })//성공
             .addCase(getProductList.rejected, (state, action) => {
               state.loading = false;

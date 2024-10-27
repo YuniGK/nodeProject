@@ -9,8 +9,10 @@ const LandingPage = () => {
   const dispatch = useDispatch();
 
   const productList = useSelector((state) => state.product.productList);
+
   const [query] = useSearchParams();
   const name = query.get("name");
+
   useEffect(() => {
     dispatch(
       getProductList({
@@ -21,8 +23,9 @@ const LandingPage = () => {
 
   return (
     <Container>
+      
       <Row>
-        {productList.length > 0 ? (
+        { productList !== undefined && productList.length > 0 ? (
           productList.map((item) => (
             <Col md={3} sm={12} key={item._id}>
               <ProductCard item={item} />
@@ -38,6 +41,7 @@ const LandingPage = () => {
           </div>
         )}
       </Row>
+      
     </Container>
   );
 };

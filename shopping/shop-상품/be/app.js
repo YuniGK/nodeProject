@@ -19,6 +19,7 @@ app.use('/api', indexRouter);
 
 //db 주소
 const mongoURI = `mongodb+srv://${MONGDB_URI_PROD}@cluster0.g5mxb.mongodb.net/shopping-mall`;
+//const mongoURI = `mongodb://localhost:27017/shopping-mall`;
 
 //db 연결
                             //예전형식과 요즘형식을 읽기 위해서 사용

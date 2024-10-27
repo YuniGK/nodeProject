@@ -46,7 +46,7 @@ const AdminProductPage = () => {
     //serarchQuery의 내용이 변경되면 새로운 url 호출 <--------- 아래의 주석 부분 해당 부분에서 구현
     if(searchQuery.name.trim() === ""){
       delete searchQuery.name;
-    };
+    };  
 
     const params = new URLSearchParams(searchQuery);//객체를 쿼리화
     const query = params.toString();
@@ -72,6 +72,8 @@ const AdminProductPage = () => {
 
   const handlePageClick = ({ selected }) => {
     //  쿼리에 페이지값 바꿔주기
+                //기존 값
+    setSearchQuery({...searchQuery, page : selected+1});
   };
 
   /* searchbox에서 검색어를 읽어옴 -> enter 키 -> serarchQuery 객체를 읽음 
@@ -100,8 +102,8 @@ const AdminProductPage = () => {
         <ReactPaginate
           nextLabel="next >"
           onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          pageCount={100}
+          pageRangeDisplayed={5}//보여줄 페이지 수
+          pageCount={totalPageNum}//전체 페이지
           forcePage={searchQuery.page - 1}
           previousLabel="< previous"
           renderOnZeroPageCount={null}
