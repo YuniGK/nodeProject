@@ -78,4 +78,18 @@ productController.updaterProduct = async(req, res) => {
     }
 }
 
+productController.getProduct = async(req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findById({_id : productId});
+
+        if(!product)
+            throw new Error('상품이 존재하지 않습니다.');
+
+        res.status(200).json({status : "select product success", data : product});
+    } catch (error) {
+        res.status(400).json({status : "select product fail", message : error.message});
+    }
+}
+
 module.exports = productController;

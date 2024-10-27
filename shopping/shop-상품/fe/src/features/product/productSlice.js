@@ -13,7 +13,7 @@ export const getProductList = createAsyncThunk(
       if(response.status !== 200){
         throw new Error(response.error);
       }
-
+     
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message)
@@ -23,7 +23,19 @@ export const getProductList = createAsyncThunk(
 
 export const getProductDetail = createAsyncThunk(
   "products/getProductDetail",
-  async (id, { rejectWithValue }) => {}
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/product/${id}`);
+
+      if(response.status !== 200){
+        throw new Error(response.error);
+      }
+
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 );
 
 export const createProduct = createAsyncThunk(
@@ -37,7 +49,7 @@ export const createProduct = createAsyncThunk(
       }
 
       dispatch(showToastMessage({message : "상품등록이 되었습니다.", status : "success"}));
-      
+
       //조회화면을 다시 조회한다.
       dispatch(getProductList({page : 1}));
 
@@ -149,7 +161,19 @@ const productSlice = createSlice({
               state.error = action.payload;//에러 셋팅
               state.success = false;
             })//실패
-            /* ===== */            
+            /* ===== */                        
+            .addCase(getProductDetail.pending, (state) => {
+              state.loading = true;
+            })//대기
+            .addCase(getProductDetail.fulfilled, (state, action) => {
+              state.loading = false;//로딩바 끄기
+              state.error = "";//에러 초기화
+              state.selectedProduct = action.payload;
+            })//성공
+            .addCase(getProductDetail.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload;//에러 셋팅
+            })//실패
   },
 });
 

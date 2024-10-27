@@ -16,4 +16,6 @@ router.put("/:id"
     , authController.checkAdminPermission//admin인지 확인 필요
     , productController.updaterProduct);
 
+router.get("/:id", productController.getProduct);
+
 module.exports = router;
