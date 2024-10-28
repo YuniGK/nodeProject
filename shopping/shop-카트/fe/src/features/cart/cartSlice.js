@@ -34,22 +34,67 @@ export const addToCart = createAsyncThunk(
 
 export const getCartList = createAsyncThunk(
   "cart/getCartList",
-  async (_, { rejectWithValue, dispatch }) => {}
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.get(`/cart`);
+
+      if(response.status !== 200){
+        throw new Error(response.error);
+      }
+
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 );
 
 export const deleteCartItem = createAsyncThunk(
   "cart/deleteCartItem",
-  async (id, { rejectWithValue, dispatch }) => {}
+  async (id, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.delete(`/cart`, {productId : id});
+
+      console.log('deltet res ',response);
+
+      if(response.status !== 200){
+        throw new Error(response.error);
+      }
+
+      dispatch(getCartList());
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 );
 
 export const updateQty = createAsyncThunk(
   "cart/updateQty",
-  async ({ id, value }, { rejectWithValue }) => {}
+  async ({ id, value }, { rejectWithValue }) => {
+    try {
+      const response = await api.put(`/cart`, {productId : id, qty : value});
+
+      console.log('update res ',response);
+
+      if(response.status !== 200){
+        throw new Error(response.error);
+      }
+
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 );
 
 export const getCartQty = createAsyncThunk(
   "cart/getCartQty",
-  async (_, { rejectWithValue, dispatch }) => {}
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 );
 
 const cartSlice = createSlice({
@@ -76,7 +121,47 @@ const cartSlice = createSlice({
               state.loading = false;
               state.error = action.payload;
             })//실패
-            /* ===== */            
+            /* ===== */      
+            .addCase(getCartList.pending, (state) => {
+              state.loading = true;
+            })//대기
+            .addCase(getCartList.fulfilled, (state, action) => {
+              state.loading = false;
+              state.error = "";
+
+              state.cartList = action.payload;
+              state.totalPrice = action.payload.reduce((total, item) => 
+                total + item.productId.price * item.qty, 0)
+            })//성공
+            .addCase(getCartList.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload;
+            })//실패
+            /* ===== */  
+            .addCase(deleteCartItem.pending, (state) => {
+              state.loading = true;
+            })//대기
+            .addCase(deleteCartItem.fulfilled, (state) => {
+              state.loading = false;
+              state.error = "";
+            })//성공
+            .addCase(deleteCartItem.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload;
+            })//실패
+            /* ===== */ 
+            .addCase(updateQty.pending, (state) => {
+              state.loading = true;
+            })//대기
+            .addCase(updateQty.fulfilled, (state) => {
+              state.loading = false;
+              state.error = "";
+            })//성공
+            .addCase(updateQty.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload;
+            })//실패
+            /* ===== */ 
   },
 });
 
