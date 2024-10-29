@@ -63,7 +63,7 @@ export const deleteCartItem = createAsyncThunk(
       dispatch(getCartQty());
       dispatch(getCartList());
 
-      return response.data.cartItemQty;
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.message)
     }
@@ -150,8 +150,6 @@ const cartSlice = createSlice({
             .addCase(deleteCartItem.fulfilled, (state, action) => {
               state.loading = false;
               state.error = "";
-
-              state.cartItemCount = action.payload;
             })//성공
             .addCase(deleteCartItem.rejected, (state, action) => {
               state.loading = false;

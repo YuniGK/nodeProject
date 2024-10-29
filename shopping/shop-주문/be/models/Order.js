@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('./User');
-const OrderItem = require('./OrderItem');
+const Product = require('./Product');
 const Schema = mongoose.Schema;
 
 /*
@@ -16,11 +16,19 @@ https://runebook.dev/ko/docs/mongoose/api/mongoose?page=2
 */
 const orderSchema = Schema({
     userId : {type : mongoose.ObjectId, ref:User}
-    , status : {type : String, default : 'preparing'}
+    , status : {type : String, default : 'preparing'}//상태
     , totalPrice : {type : Number, required : true, default : 0}
-    , shipTo : {type : Object, required : true}
-    , contact : {type : Object, required : true}
-    , orderNum : {type : String}
+    , shipTo : {type : Object, required : true}//배송지
+    , contact : {type : Object, required : true}//연락처
+    , orderNum : {type : String}//주문번호
+    , items : [
+        {
+            productId : {type : mongoose.ObjectId, ref:Product}        
+            , qty : {type : Number, default : 1, required : true}
+            , size : {type : String, required : true}
+            , price : {type : Number, required : true}
+        }
+    ]
 }, {timstamps : true});
 
 //조회시 해당 정보는 빼고 조회한다.

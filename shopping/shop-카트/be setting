@@ -10,8 +10,6 @@ npm start
 //시작
 nodemon app
 
-npm i react-credit-cards-2
-
 ---> fe setting
 
 //초기화
@@ -22,3 +20,6 @@ npm i http-proxy-middleware
 
 //시작
 npm start
+
+//카드 정보 입력을 위한
+npm i react-credit-cards-2

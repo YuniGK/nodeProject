@@ -16,22 +16,53 @@ const initialState = {
 // Async thunks
 export const createOrder = createAsyncThunk(
   "order/createOrder",
-  async (payload, { dispatch, rejectWithValue }) => {}
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.post(`/order`, payload);
+
+      if(response.status !== 200){
+        throw new Error(response.error);
+      }
+
+      return response.data.data;
+    } catch (error) {
+      dispatch(showToastMessage({message : error.message, status : "error"}));
+      return rejectWithValue(error.message)
+    }
+  }  
 );
 
 export const getOrder = createAsyncThunk(
   "order/getOrder",
-  async (_, { rejectWithValue, dispatch }) => {}
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
 );
 
 export const getOrderList = createAsyncThunk(
   "order/getOrderList",
-  async (query, { rejectWithValue, dispatch }) => {}
+  async (query, { rejectWithValue, dispatch }) => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
 );
 
 export const updateOrder = createAsyncThunk(
   "order/updateOrder",
-  async ({ id, status }, { dispatch, rejectWithValue }) => {}
+  async ({ id, status }, { dispatch, rejectWithValue }) => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
 );
 
 // Order slice
@@ -43,7 +74,23 @@ const orderSlice = createSlice({
       state.selectedOrder = action.payload;
     },
   },
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    builder 
+           .addCase(createOrder.pending, (state) => {
+              state.loading = true;
+            })//대기
+            .addCase(createOrder.fulfilled, (state, action) => {
+              state.loading = false;
+              state.error = "";
+
+              state.orderNum = action.payload;
+            })//성공
+            .addCase(createOrder.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload;
+            })//실패
+            /* ===== */      
+  },
 });
 
 export const { setSelectedOrder } = orderSlice.actions;
