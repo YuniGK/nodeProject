@@ -10,8 +10,6 @@ npm start
 //시작
 nodemon app
 
-npm i react-credit-cards-2
-
 ---> fe setting
 
 //초기화
