@@ -12,11 +12,11 @@ router.get("/"
     , authController.authenticate
     , cartController.getCart);
 
-router.delete("/"
+router.delete("/:id"
     , authController.authenticate
     , cartController.deleteCartItem);
 
-router.put("/"
+router.put("/:id"
     , authController.authenticate
     , cartController.updateQty);
         

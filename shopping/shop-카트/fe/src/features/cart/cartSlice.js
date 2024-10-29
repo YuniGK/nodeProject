@@ -53,9 +53,7 @@ export const deleteCartItem = createAsyncThunk(
   "cart/deleteCartItem",
   async (id, { rejectWithValue, dispatch }) => {
     try {
-      const response = await api.delete(`/cart`, {productId : id});
-
-      console.log('deltet res ',response);
+      const response = await api.delete(`/cart/${id}`);
 
       if(response.status !== 200){
         throw new Error(response.error);
@@ -72,9 +70,7 @@ export const updateQty = createAsyncThunk(
   "cart/updateQty",
   async ({ id, value }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/cart`, {productId : id, qty : value});
-
-      console.log('update res ',response);
+      const response = await api.put(`/cart/${id}`, {qty : value});
 
       if(response.status !== 200){
         throw new Error(response.error);
@@ -129,9 +125,9 @@ const cartSlice = createSlice({
               state.loading = false;
               state.error = "";
 
-              state.cartList = action.payload;
+              state.cartList = action.payload;             
               state.totalPrice = action.payload.reduce((total, item) => 
-                total + item.productId.price * item.qty, 0)
+                total + item.productId.price * item.qty, 0)              
             })//성공
             .addCase(getCartList.rejected, (state, action) => {
               state.loading = false;

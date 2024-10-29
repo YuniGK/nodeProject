@@ -68,13 +68,14 @@ cartController.getCart = async (req, res) => {
 cartController.deleteCartItem = async (req, res) =>{
     try {
         const {userId} = req;
-        const {productId} = req.body;
+        const productId = req.params.id;
 
-        let cart = await Cart.updateOne({userId}
-            , {$pullAll: {"items": [productId]}}
-            , {'new' : true}
+        let cart = await Cart.updateOne(
+            {userId}
+            , { $pull: { items : {_id : productId}}}
+            , { new: true }
         );
-
+        
         res.status(200).json({status : "delte cart success", data : cart});
     } catch (error) {
         res.status(400).json({status : "delete cart item fail", message : error.message});
@@ -84,16 +85,29 @@ cartController.deleteCartItem = async (req, res) =>{
 cartController.updateQty = async (req, res) =>{
     try {
         const {userId} = req;
-        const {productId, qty} = req.body;
+        const productId = req.params.id;
+        const {qty} = req.body;
 
+        console.log(`user ${userId} --- product ${productId} --- qty ${qty}`)
+        /*
+        배열에 값 추가
         const cart = await Cart.updateOne(
-            { userId },
-            {
-              $push: { items: { productId, qty } },
-            },
-          );
+            { userId, 'items._id' : productId}
+            , {$push: { items: { qty }}}
+            , { new: true }
+        );
+        */
+        let cart = await Cart.updateOne(
+            { userId, "items._id": productId }
+            , { $set: {"items.$.qty": qty}}
+            , { new: true }
+        );
+
+        console.log('end')
+
+        res.status(200).json({status : "cart qty success", data : cart});
     } catch (error) {
-        res.status(400).json({status : "delete cart item fail", message : error.message});
+        res.status(400).json({status : "cart qty fail", message : error.message});
     }
 }
 
