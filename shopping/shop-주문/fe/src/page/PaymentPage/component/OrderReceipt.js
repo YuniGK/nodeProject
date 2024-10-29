@@ -16,7 +16,7 @@ const OrderReceipt = ({cartList, totalPrice}) => {
       {
         cartList.length > 0 && 
           cartList.map((item) => (
-          <li>
+          <li key = {item._id}>
             <div className="display-flex space-between">
               <div>{item.productId.name}</div>
 

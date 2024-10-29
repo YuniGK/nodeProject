@@ -65,11 +65,18 @@ cartController.getCart = async (req, res) => {
     }
 }
 
+//https://hackmd.io/@oW_dDxdsRoSpl0M64Tfg2g/HkP4v_H53
 cartController.deleteCartItem = async (req, res) =>{
     try {
         const {userId} = req;
         const productId = req.params.id;
 
+        /*
+        const cart = await Cart.findOne({ userId });
+        cart.items = cart.items.filter((item) => !item._id.equals(id));
+
+        await cart.save();
+        */
         let cart = await Cart.updateOne(
             {userId}
             , { $pull: { items : {_id : productId}}}
@@ -97,15 +104,49 @@ cartController.updateQty = async (req, res) =>{
             , { new: true }
         );
         */
-        let cart = await Cart.updateOne(
+       /*
+        const cart = await Cart.findOne({ userId }).populate({
+        path: "items",
+        populate: {
+            path: "productId",
+            model: "Product",
+        },
+        });
+        if (!cart) throw new Error("There is no cart for this user");
+        const index = cart.items.findIndex((item) => item._id.equals(id));
+        if (index === -1) throw new Error("Can not find item");
+        cart.items[index].qty = qty;
+        await cart.save();
+       */
+        let cartUpdate = await Cart.updateOne(
             { userId, "items._id": productId }
             , { $set: {"items.$.qty": qty}}
             , { new: true }
         );
 
-        console.log('end')
+        const cart = await Cart.findOne({ userId }).populate({
+            path: "items",
+            populate: {
+              path: "productId",
+              model: "Product",
+            },
+        });
 
-        res.status(200).json({status : "cart qty success", data : cart});
+        res.status(200).json({status : "cart qty success", data : cart.items});
+    } catch (error) {
+        res.status(400).json({status : "cart qty fail", message : error.message});
+    }
+}
+
+cartController.getCartQty = async (req, res) => {
+    try {
+        const { userId } = req;
+        const cart = await Cart.findOne({ userId: userId });
+
+        if (!cart) 
+            throw new Error("There is no cart!");
+
+        res.status(200).json({ status: 200, data: cart.items.length });
     } catch (error) {
         res.status(400).json({status : "cart qty fail", message : error.message});
     }
