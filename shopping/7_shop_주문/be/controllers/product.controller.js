@@ -92,4 +92,65 @@ productController.getProduct = async(req, res) => {
     }
 }
 
+productController.checkItemListStock = async (itemList) => {
+    const insufficientStockItems = [];
+
+    /*
+    itemList.map(async (item) => {
+        const stockCheck = await productController.checkItemListStock(item);
+
+        if(!stockCheck.isVerify){
+            insufficientStockItems.push({
+                item
+                , message : stockCheck.isVerify.message
+            });
+        }
+
+        return stockCheck;
+    })
+    */
+   /* 비동기를 한번에 처리 Promise 
+   Promise - 쓰레드 처럼 여러일을 동시에 처리한다. */
+   await Promise.all(
+    itemList.map(async (item) => {
+        const stockCheck = await productController.checkStock(item);
+
+        if(!stockCheck.isVerify){
+            insufficientStockItems.push({
+                item
+                , message : stockCheck.isVerify.message
+            });
+        }
+
+        return stockCheck;
+    })
+   );
+
+    return insufficientStockItems;
+}
+
+productController.checkStock = async (item) => {
+    //구매하려는 아이템 재고 정보
+    const product = await Product.findById(item.productId);
+
+    //구매하려는 아이템 qty와 재고 비교
+    if(product.stock[item.size] < item.qty){
+        //재고가 불충분할 시, 메시지와 함께 데이터 반환
+        return {isVerify : false
+            , message : `${product.name}의 ${item.size} 재고가 부족합니다.`};
+    }
+
+                    //기존의 정보를 가져온다.
+    const newStock = {...product.stock};
+    newStock[item.size] -= item.qty;
+
+    //정보를 업데이트 해준다.
+    product.stock = newStock;
+
+    //충분할 경우, 재고에서 qty를 뺀후 메시지 반환
+    await product.save();
+
+    return {isVerify : true};
+}
+
 module.exports = productController;
