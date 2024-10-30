@@ -24,6 +24,8 @@ export const createOrder = createAsyncThunk(
         throw new Error(response.error);
       }
 
+      dispatch(getCartQty());
+
       return response.data.data;
     } catch (error) {
       dispatch(showToastMessage({message : error.message, status : "error"}));
