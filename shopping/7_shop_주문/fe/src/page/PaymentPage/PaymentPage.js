@@ -39,8 +39,18 @@ const PaymentPage = () => {
   const {cartList, totalPrice} = useSelector((state) => state.cart);
 
   useEffect(() => {
-    // 오더번호를 받으면 어디로 갈까?
+    if(firstLoading){
+      setFirstLoading(false);
+    }else{
+      // 오더번호를 받으면 어디로 갈까?
+      if(orderNum !== ""){
+        navigate("/payment/success");
+      }
+    }
   }, [orderNum]);
+  /* useEffect - 한번은 무조건 실행 된다, 첫 주문 후 orderNum이 있을 경우 두번째 주문시
+  바로 결제 완료 화면으로 이동하게 되어 firstLoading을 사용해서 결제 하지 않고 완료 화면으로
+  이동하는 것을 막는다. */
 
   const handleSubmit = (event) => {
     event.preventDefault();
