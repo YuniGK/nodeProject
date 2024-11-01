@@ -95,7 +95,6 @@ cartController.updateQty = async (req, res) =>{
         const productId = req.params.id;
         const {qty} = req.body;
 
-        console.log(`user ${userId} --- product ${productId} --- qty ${qty}`)
         /*
         배열에 값 추가
         const cart = await Cart.updateOne(

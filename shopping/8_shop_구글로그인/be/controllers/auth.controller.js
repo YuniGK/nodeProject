@@ -1,12 +1,16 @@
 const User = require("../models/User");
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const {OAuth2Client} = require('google-auth-library');
+const bcrypt = require('bcryptjs');
 
 require('dotenv').config();
 
 const authController = {};
 
+const salt = bcrypt.genSaltSync(10);
+
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 authController.loginWithEmail = async (req, res) => {
     try {
@@ -77,6 +81,42 @@ authController.checkAdminPermission = async (req, res, next) => {
     } catch (error) {
         res.status(400).json({status : "check admin fail", message : error.message});
     }
+}
+
+authController.loginWithGoogle = async (req, res) => {
+    try {
+        const {token} = req.body;
+        const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+  
+        const ticket = await googleClient.verifyIdToken({
+            idToken: token//해석 하고 싶은 내용
+            //, audience: GOOGLE_CLIENT_ID//해석을 위한 키
+        });
+ 
+        const {email, name} = ticket.getPayload();
+       
+        let user = await User.findOne({email});
+
+        if(!user){
+            //유저를 생성
+            const randomPassword = ""+Math.floor(Math.random()*100000000);
+            const pwd = await bcrypt.hashSync(randomPassword, salt); 
+
+            user = new User({email, password : pwd, name});
+
+            await user.save();
+        }
+        
+        //토큰을 발행 
+        const tokens = await user.generateToken();
+
+        return res.status(200).json({status : "login success", data : user, token : tokens});
+       
+    
+    } catch (error) {
+        res.status(400).json({status : "login fail", message : error.message});
+    }
+  
 }
 
 module.exports = authController;

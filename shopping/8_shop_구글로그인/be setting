@@ -20,3 +20,10 @@ npm i http-proxy-middleware
 
 //시작
 npm start
+
+//카드 정보 입력을 위한
+npm i react-credit-cards-2
+
+//구글 로그인
+npm i @react-oauth/google
+
