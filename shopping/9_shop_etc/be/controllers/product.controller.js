@@ -24,7 +24,8 @@ productController.getListProduct = async (req, res) => {
         const {page, name} = req.query;
                                     //$regex 포함된 내용을 검색
                                                 //i 대소문자 구분하지 않는다.
-        const cond = name ? {name : {$regex:name, $options:"i"}} : {} ;
+        //const cond = name ? {name : {$regex:name, $options:"i"}, isDeleted : false} : {isDeleted : false} ;
+        const cond = name ? {name : {$regex:name, $options:"i", isDeleted : false}} : {isDeleted : false} ;
 
         let query = Product.find(cond);
 
@@ -151,6 +152,23 @@ productController.checkStock = async (item) => {
     await product.save();
 
     return {isVerify : true};
+}
+
+productController.deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        
+        const productDelete = await Product.findByIdAndUpdate(
+            productId
+            , {isDeleted : true}
+            , {new : true}
+        );
+
+        res.status(200).json({status : "product delete success", data: productDelete});
+
+    } catch (error) {
+        res.status(400).json({status : "product delete fail", message : error.message});
+    }
 }
 
 module.exports = productController;

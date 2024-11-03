@@ -7,6 +7,7 @@ export const getProductList = createAsyncThunk(
   "products/getProductList",
   async (query, { rejectWithValue }) => {
     try {
+      console.log('query ', query)
                                                   //파라미터에 모든 쿼리를 보낸다.
       const response = await api.get("/product", {params : {...query}});
      
@@ -50,7 +51,18 @@ export const createProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "products/deleteProduct",
-  async (id, { dispatch, rejectWithValue }) => {}
+  async (id, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.put(`/product/delete/${id}`);
+
+      dispatch(showToastMessage({message : "삭제 되었습니다.", status : "success"}));
+      dispatch(getProductList({page : 1}));
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
 );
 
 export const editProduct = createAsyncThunk(
@@ -155,6 +167,18 @@ const productSlice = createSlice({
               state.selectedProduct = action.payload;
             })//성공
             .addCase(getProductDetail.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload;//에러 셋팅
+            })//실패
+            /* ===== */                        
+            .addCase(deleteProduct.pending, (state) => {
+              state.loading = true;
+            })//대기
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+              state.loading = false;//로딩바 끄기
+              state.error = "";//에러 초기화
+            })//성공
+            .addCase(deleteProduct.rejected, (state, action) => {
               state.loading = false;
               state.error = action.payload;//에러 셋팅
             })//실패
